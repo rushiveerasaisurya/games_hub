@@ -1,0 +1,49 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  min-height: 100vh;
+}
+
+.App {
+  min-height: 100vh;
+}
+
+/* Game specific color schemes */
+.game-tic-tac-toe { --primary: #e74c3c; --secondary: #3498db; }
+.game-snake { --primary: #2ecc71; --secondary: #27ae60; }
+.game-sudoku { --primary: #9b59b6; --secondary: #8e44ad; }
+.game-pacman { --primary: #f1c40f; --secondary: #f39c12; }
+.game-bingo { --primary: #e67e22; --secondary: #d35400; }
+.game-mario { --primary: #e74c3c; --secondary: #c0392b; }
+.game-ludo { --primary: #3498db; --secondary: #2980b9; }
+.game-snakes-ladders { --primary: #1abc9c; --secondary: #16a085; }
+.game-skribble { --primary: #9b59b6; --secondary: #8e44ad; }
+.game-fruit-ninja { --primary: #e67e22; --secondary: #d35400; }
+
+/* Animations */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes bounce {
+  0%, 20%, 60%, 100% { transform: translateY(0); }
+  40% { transform: translateY(-10px); }
+  80% { transform: translateY(-5px); }
+}
+
+@keyframes pulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+  100% { transform: scale(1); }
+}
+
+.fade-in { animation: fadeIn 0.6s ease-out; }
+.bounce { animation: bounce 2s infinite; }
+.pulse { animation: pulse 2s infinite; }

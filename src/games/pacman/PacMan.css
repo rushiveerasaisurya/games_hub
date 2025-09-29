@@ -1,0 +1,89 @@
+.pacman-game {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 80vh;
+  padding: 2rem;
+}
+
+.pacman-game .game-container {
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 20px;
+  padding: 2rem;
+  text-align: center;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.1);
+  backdrop-filter: blur(10px);
+  max-width: 600px;
+  width: 100%;
+}
+
+.pacman-game .game-header h2 {
+  color: #f1c40f;
+  font-size: 2rem;
+  margin-bottom: 1rem;
+}
+
+.coming-soon {
+  padding: 3rem 2rem;
+}
+
+.pacman-icon {
+  font-size: 5rem;
+  margin-bottom: 1rem;
+  animation: bounce 2s infinite;
+}
+
+.coming-soon h3 {
+  color: #2c3e50;
+  font-size: 2rem;
+  margin-bottom: 1rem;
+}
+
+.coming-soon p {
+  color: #7f8c8d;
+  font-size: 1.1rem;
+  margin-bottom: 1rem;
+  line-height: 1.6;
+}
+
+.coming-soon ul {
+  text-align: left;
+  max-width: 300px;
+  margin: 2rem auto;
+  color: #2c3e50;
+}
+
+.coming-soon li {
+  margin: 0.8rem 0;
+  font-size: 1rem;
+}
+
+.temp-controls {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  margin-top: 3rem;
+}
+
+.back-btn,
+.home-btn {
+  background: linear-gradient(135deg, #f1c40f, #f39c12);
+  color: white;
+  border: none;
+  padding: 0.8rem 1.5rem;
+  border-radius: 50px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: all 0.3s ease;
+  font-size: 1rem;
+}
+
+.home-btn {
+  background: linear-gradient(135deg, #95a5a6, #7f8c8d);
+}
+
+.back-btn:hover,
+.home-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+}
