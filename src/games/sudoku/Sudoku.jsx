@@ -84,17 +84,12 @@ function Sudoku() {
   };
 
   const isValidMove = (board, row, col, num) => {
-    // Check row
     for (let x = 0; x < 9; x++) {
       if (board[row][x] === num) return false;
     }
-
-    // Check column
     for (let x = 0; x < 9; x++) {
       if (board[x][col] === num) return false;
     }
-
-    // Check 3x3 box
     const startRow = row - row % 3;
     const startCol = col - col % 3;
     for (let i = 0; i < 3; i++) {
@@ -129,6 +124,18 @@ function Sudoku() {
     setBoard(newBoard);
     checkCompletion(newBoard);
   };
+ useEffect(() => {
+    const handleKeyDown = (event) => {
+      const num = parseInt(event.key, 10);
+      if (num >= 1 && num <= 9) {
+        handleNumberInput(num);
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [handleNumberInput]);
 
   const checkCompletion = (currentBoard) => {
     for (let row = 0; row < 9; row++) {
@@ -206,45 +213,42 @@ function Sudoku() {
           </div>
         </div>
 
-        <div className="sudoku-board">
-          {board.map((row, rowIndex) =>
-            row.map((cell, colIndex) => (
-              <div
-                key={`${rowIndex}-${colIndex}`}
-                className={getCellClass(rowIndex, colIndex)}
-                onClick={() => handleCellClick(rowIndex, colIndex)}
-              >
-                {cell !== 0 ? cell : ''}
-              </div>
-            ))
-          )}
-        </div>
-
-        <div className="number-pad">
-          {[1, 2, 3, 4, 5, 6, 7, 8, 9].map(num => (
-            <button
-              key={num}
-              className="number-btn"
-              onClick={() => handleNumberInput(num)}
-            >
-              {num}
+        <div className="sudoku-main-content">
+          <div className="game-controls">
+            <button className="btn" onClick={useHint} disabled={hints <= 0}>
+              💡 Hint ({hints})
             </button>
-          ))}
-          <button className="number-btn erase" onClick={() => handleNumberInput(0)}>
-            ⌫
-          </button>
-        </div>
-
-        <div className="game-controls">
-          <button className="control-btn" onClick={useHint} disabled={hints <= 0}>
-            💡 Hint ({hints})
-          </button>
-          <button className="control-btn" onClick={generatePuzzle}>
-            🔄 New Puzzle
-          </button>
-          <button className="control-btn" onClick={() => navigate('/sudoku')}>
-            ⚙️ Settings
-          </button>
+            <button className="btn" onClick={generatePuzzle}>
+              🔄 New Puzzle
+            </button>
+            <button className="btn" onClick={() => navigate('/sudoku')}>
+             🏠 Home
+            </button>
+          </div>
+          <div className="sudoku-board">
+            {board.map((row, rowIndex) =>
+              row.map((cell, colIndex) => (
+                <div
+                  key={`${rowIndex}-${colIndex}`}
+                  className={getCellClass(rowIndex, colIndex)}
+                  onClick={() => handleCellClick(rowIndex, colIndex)}
+                >
+                  {cell !== 0 ? cell : ''}
+                </div>
+              ))
+            )}
+          </div>
+          <div className="number-pad">
+            {[1, 2, 3, 4, 5, 6, 7, 8, 9].map(num => (
+              <button
+                key={num}
+                className="number-btn"
+                onClick={() => handleNumberInput(num)}
+              >
+                {num}
+              </button>
+            ))}
+          </div>
         </div>
 
         {isComplete && (

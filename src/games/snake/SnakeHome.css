@@ -1,4 +1,4 @@
-.snake-home {
+.snake-home-page {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -6,10 +6,10 @@
   padding: 2rem;
 }
 
-.snake-home .game-home-container {
+.game-home-container {
   background: rgba(255, 255, 255, 0.95);
   border-radius: 20px;
-  padding: 3rem;
+  padding: 1rem;
   text-align: center;
   box-shadow: 0 20px 50px rgba(0, 0, 0, 0.1);
   backdrop-filter: blur(10px);
@@ -17,51 +17,50 @@
   width: 100%;
 }
 
-.snake-home .game-icon-large {
-  font-size: 5rem;
-  margin-bottom: 1rem;
+.game-icon-large {
+  font-size: 3.5rem;
+  margin-bottom: 0.5rem;
   display: inline-block;
   animation: bounce 2s infinite;
 }
 
-.snake-home .game-title {
-  font-size: 3rem;
+.game-title {
+  font-size: 2.5rem;
   font-weight: bold;
-  color: #2ecc71;
-  margin-bottom: 0.5rem;
+  margin-bottom: 0.2rem;
   text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
-.snake-home .game-subtitle {
+.game-subtitle {
   color: #7f8c8d;
-  font-size: 1.2rem;
-  margin-bottom: 3rem;
+  font-size: 0.8rem;
+  margin-bottom: 1.5rem;
 }
 
-.snake-home .game-options {
+.game-options {
   display: flex;
   flex-direction: column;
   gap: 2rem;
   margin-bottom: 2rem;
 }
 
-.snake-home .option-group h3 {
+.option-group h3 {
   color: #2c3e50;
   margin-bottom: 1rem;
   font-size: 1.3rem;
 }
 
-.snake-home .option-buttons {
+.option-buttons {
   display: flex;
   gap: 1rem;
   flex-wrap: wrap;
   justify-content: center;
 }
 
-.snake-home .option-btn {
-  background: rgba(46, 204, 113, 0.1);
+.option-btn {
+  background: rgba(0, 255, 0, 0.1);
   border: 2px solid transparent;
-  color: #2ecc71;
+  color: #008000;
   padding: 0.8rem 1.5rem;
   border-radius: 50px;
   cursor: pointer;
@@ -70,38 +69,43 @@
   font-size: 1rem;
 }
 
-.snake-home .option-btn:hover {
-  background: rgba(46, 204, 113, 0.2);
+.option-btn:hover {
+  background: rgba(0, 255, 0, 0.2);
   transform: translateY(-2px);
 }
 
-.snake-home .option-btn.active {
-  background: #2ecc71;
-  color: white;
-  box-shadow: 0 4px 15px rgba(46, 204, 113, 0.3);
+.option-btn.active {
+  background: #0f0;
+  color: #000;
+  box-shadow: 0 4px 15px rgba(0, 255, 0, 0.3);
 }
 
-.game-instructions {
-  background: rgba(46, 204, 113, 0.1);
-  padding: 1.5rem;
-  border-radius: 15px;
-  margin-bottom: 2rem;
+.high-scores {
+    margin-top: 2rem;
+    margin-bottom: 2rem;
 }
 
-.game-instructions h4 {
-  color: #2ecc71;
-  margin-bottom: 1rem;
-  font-size: 1.2rem;
+.high-scores h2 {
+    color: #2c3e50;
+    margin-bottom: 0.5rem;
+    font-size: 1.3rem;
 }
 
-.instructions p {
-  color: #2c3e50;
-  margin: 0.5rem 0;
-  font-size: 1rem;
+.high-scores ul {
+    list-style: none;
+    padding: 0;
+    font-size: 1.2em;
+    color: #7f8c8d;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
 }
 
-.snake-home .start-game-btn {
-  background: linear-gradient(135deg, #2ecc71, #27ae60);
+.high-scores li {
+    margin: 5px 0;
+}
+
+.start-game-btn {
   color: white;
   border: none;
   padding: 1rem 3rem;
@@ -110,29 +114,41 @@
   font-weight: bold;
   cursor: pointer;
   transition: all 0.3s ease;
-  box-shadow: 0 8px 25px rgba(46, 204, 113, 0.3);
+  box-shadow: 0 8px 25px rgba(0, 255, 0, 0.3);
 }
 
-.snake-home .start-game-btn:hover {
+.start-game-btn:hover {
   transform: translateY(-3px);
-  box-shadow: 0 12px 35px rgba(46, 204, 113, 0.4);
+  box-shadow: 0 12px 35px rgba(0, 255, 0, 0.4);
 }
 
-@media (max-width: 768px) {
-  .snake-home .game-home-container {
+@keyframes bounce {
+  0%, 20%, 50%, 80%, 100% {
+    transform: translateY(0);
+  }
+  40% {
+    transform: translateY(-30px);
+  }
+  60% {
+    transform: translateY(-15px);
+  }
+}
+
+@media (max-width: 600px) {
+  .game-home-container {
     padding: 2rem;
     margin: 1rem;
   }
   
-  .snake-home .game-title {
+  .game-title {
     font-size: 2.5rem;
   }
   
-  .snake-home .option-buttons {
+  .option-buttons {
     flex-direction: column;
   }
   
-  .snake-home .option-btn {
+  .option-btn {
     padding: 1rem;
   }
 }

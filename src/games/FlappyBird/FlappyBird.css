@@ -1,0 +1,141 @@
+:root {
+  --game-width: 360px;
+  --game-height: 520px;
+  --pipe-width: 54px;
+  --ground-height: 90px;
+  --bird-size: 28px;
+}
+
+.flappy-bird-app-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-height: 100vh;
+  padding: 1.1rem;
+  background: #22293f;
+  color: #fff;
+  font-family: 'Press Start 2P', Arial, sans-serif;
+}
+
+.fb-header {
+  font-size: 2.6rem;
+  font-weight: bold;
+  margin-bottom: 12px;
+  color: #70c5ce;
+  letter-spacing: 1px;
+}
+
+.flappy-game-container {
+  position: relative;
+  width: var(--game-width);
+  height: var(--game-height);
+  background: linear-gradient(to bottom, #70c5ce 84%, #fffde4 100%);
+  overflow: hidden;
+  border: 3px solid #2c8020;
+  border-radius: 16px;
+  box-shadow: 0 0 26px #18313177;
+  margin-top: 1rem;
+  cursor: pointer;
+}
+
+.flappy-bird {
+  position: absolute;
+  width: var(--bird-size); height: var(--bird-size);
+  z-index: 50; transition: transform .08s;
+}
+.flappy-bird-body {
+  background: #ffd700;
+  border-radius: 48% 52% 54% 46%;
+  border: 2px solid #a07d00;
+  width: var(--bird-size); height: var(--bird-size);
+  position: absolute; left: 0; top: 0;
+  box-shadow: 2px 2px 4px #a07d0044;
+}
+.flappy-bird-wing {
+  position: absolute; top: 6px; left: 8px;
+  width: 13px; height: 8px;
+  background: #ffe077;
+  border-radius: 60% 33% 33% 53%;
+  box-shadow: 1px 1px 2px #bbb2;
+  z-index: 5;
+  animation: wingflap .35s infinite alternate cubic-bezier(.7,.12,.3,1.2);
+}
+@keyframes wingflap {
+  from { transform: rotate(-14deg) scaleY(1.03);}
+  to   { transform: rotate(13deg) scaleY(.89);}
+}
+.flappy-bird-eye {
+  position: absolute;
+  top: 8px; left: 19px; width: 6px; height: 6px;
+  background: #191919;
+  border-radius: 50%;
+  z-index: 21;
+}
+
+.flappy-pipe {
+  position: absolute;
+  width: var(--pipe-width);
+  background: linear-gradient(#74bf2e 80%, #528020 94%);
+  border: 2px solid #528020;
+  box-shadow: 1px 1px 8px #56802049;
+  z-index: 7;
+}
+.flappy-pipe.top {
+  top: 0;
+  border-bottom: none;
+}
+.flappy-pipe.bottom {
+  bottom: var(--ground-height);
+  border-top: none;
+}
+
+.flappy-ground {
+  position: absolute;
+  left: 0; bottom: 0;
+  width: 100%; height: var(--ground-height);
+  background: linear-gradient(90deg,#acd475 88%,#368020 100%);
+  border-top: 4px solid #528020;
+  z-index: 21; pointer-events: none;
+}
+
+.flappy-score {
+  position: absolute;
+  top: 22px; left: 50%;
+  transform: translateX(-50%);
+  font-size: 2.2rem;
+  font-weight: bold;
+  color: #fff;
+  text-shadow: 2px 2px 4px #3335;
+  font-family: 'Press Start 2P', cursive;
+  z-index: 99; user-select: none;
+}
+
+.flappy-overlay {
+  position: absolute;
+  top: 0; left: 0; width: 100%; height: 100%;
+  background: rgba(25,44,44,.55);
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  z-index: 100;
+}
+.flappy-overlay h2 {
+  font-size: 2rem; color: #fff; margin-bottom: 1.2rem;
+  font-family: 'Press Start 2P', cursive;
+}
+.flappy-overlay button {
+  padding: 0.89rem 1.7rem;
+  font-size: 1.07rem;
+  font-weight: bold;
+  color: #fff;
+  background: linear-gradient(90deg,#74bf2e 80%,#8cd43e 100%);
+  border: none; border-radius: 8px;
+  cursor: pointer; transition: 0.13s;
+  box-shadow: 0 3px 9px rgba(0,0,0,.18);
+  outline: 0;
+}
+.flappy-overlay button:hover {
+  background: #8cd43e;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 16px #0003;
+}
+

@@ -1,33 +1,33 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import './SnakeHome.css';
+import './Memory.css';
 
-const SnakeHome = () => {
+const MemoryHome = () => {
     const navigate = useNavigate();
-    const [level, setLevel] = useState({ name: 'easy', speed: 200 });
-    const [highScores, setHighScores] = useState({ easy: 0, medium: 0, hard: 0 });
+    const [level, setLevel] = useState({ name: 'easy', size: 16, cols: 4 });
+    const [highScores, setHighScores] = useState({ easy: 'N/A', medium: 'N/A', hard: 'N/A' });
 
     useEffect(() => {
-        const storedScores = localStorage.getItem('snakeHighScores');
+        const storedScores = localStorage.getItem('memoryHighScores');
         if (storedScores) {
             setHighScores(JSON.parse(storedScores));
         }
     }, []);
 
-    const handleLevelSelect = (name, speed) => {
-        setLevel({ name, speed });
+    const handleLevelSelect = (name, size, cols) => {
+        setLevel({ name, size, cols });
     };
 
     const startGame = () => {
-        navigate('/snake/play', { state: { level: level.name, speed: level.speed } });
+        navigate('/memory/play', { state: { level: level.name, size: level.size, cols: level.cols } });
     };
 
     return (
-        <div className="snake-home-page fade-in">
+        <div className="memory-home-page fade-in">
             <div className="game-home-container">
-                <div className="game-icon-large">🐍</div>
-                <h1 className="game-title" style={{ color: '#0f0' }}>SNAKE</h1>
-                <p className="game-subtitle">Eat the food, grow your snake, and avoid the walls!</p>
+                <div className="game-icon-large">🧠</div>
+                <h1 className="game-title" style={{ color: '#3498db' }}>MEMORY GAME</h1>
+                <p className="game-subtitle">Test your memory and find all the matching pairs!</p>
 
                 <div className="game-options">
                     <div className="option-group">
@@ -35,28 +35,28 @@ const SnakeHome = () => {
                         <div className="option-buttons">
                             <button
                                 className={`option-btn ${level.name === 'easy' ? 'active' : ''}`}
-                                onClick={() => handleLevelSelect('easy', 200)}
+                                onClick={() => handleLevelSelect('easy', 16, 4)}
                             >
-                                😊 Easy
+                                😊 Easy (4x4)
                             </button>
                             <button
                                 className={`option-btn ${level.name === 'medium' ? 'active' : ''}`}
-                                onClick={() => handleLevelSelect('medium', 150)}
+                                onClick={() => handleLevelSelect('medium', 30, 6)}
                             >
-                                🤔 Medium
+                                🤔 Medium (6x5)
                             </button>
                             <button
                                 className={`option-btn ${level.name === 'hard' ? 'active' : ''}`}
-                                onClick={() => handleLevelSelect('hard', 100)}
+                                onClick={() => handleLevelSelect('hard', 36, 6)}
                             >
-                                😤 Hard
+                                😤 Hard (6x6)
                             </button>
                         </div>
                     </div>
                 </div>
 
                 <div className="high-scores">
-                    <h2>HIGH SCORES</h2>
+                    <h2>BEST TIMES</h2>
                     <ul>
                         <li>Easy: <span>{highScores.easy}</span></li>
                         <li>Medium: <span>{highScores.medium}</span></li>
@@ -67,7 +67,7 @@ const SnakeHome = () => {
                 <button
                     className="start-game-btn pulse"
                     onClick={startGame}
-                    style={{ background: 'linear-gradient(135deg, #0f0, #008000)' }}
+                    style={{ background: 'linear-gradient(135deg, #3498db, #2980b9)' }}
                 >
                     🚀 Start Game
                 </button>
@@ -76,4 +76,4 @@ const SnakeHome = () => {
     );
 };
 
-export default SnakeHome;
+export default MemoryHome;

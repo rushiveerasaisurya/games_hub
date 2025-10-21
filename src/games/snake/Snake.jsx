@@ -1,196 +1,215 @@
-import { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import './Snake.css';
 
-function Snake() {
-  const location = useLocation();
-  const navigate = useNavigate();
-  const { speed = 150 } = location.state || {};
-
-  const [snake, setSnake] = useState([{ x: 10, y: 10 }]);
-  const [food, setFood] = useState({ x: 15, y: 15 });
-  const [direction, setDirection] = useState({ x: 0, y: -1 });
-  const [gameOver, setGameOver] = useState(false);
-  const [score, setScore] = useState(0);
-  const [highScore, setHighScore] = useState(parseInt(localStorage.getItem('snakeHighScore')) || 0);
-  const [isPaused, setIsPaused] = useState(false);
-
-  const boardSize = 20;
-
-  const generateFood = useCallback(() => {
+const GRID_SIZE = 18;
+const BOARD_SIZE = 23;
+const generateFoodPosition = (snake) => {
     let newFood;
     do {
-      newFood = {
-        x: Math.floor(Math.random() * boardSize),
-        y: Math.floor(Math.random() * boardSize)
-      };
+        newFood = {
+            x: Math.floor(Math.random() * BOARD_SIZE),
+            y: Math.floor(Math.random() * BOARD_SIZE),
+        };
     } while (snake.some(segment => segment.x === newFood.x && segment.y === newFood.y));
     return newFood;
-  }, [snake]);
+};
 
-  const moveSnake = useCallback(() => {
-    if (gameOver || isPaused) return;
+const Snake = () => {
+    const navigate = useNavigate();
+    const location = useLocation();
+    const canvasRef = useRef(null);
 
-    setSnake(currentSnake => {
-      const newSnake = [...currentSnake];
-      const head = { ...newSnake[0] };
+    const { level, speed } = location.state || { level: 'easy', speed: 200 };
 
-      head.x += direction.x;
-      head.y += direction.y;
+    const [snake, setSnake] = useState([{ x: 10, y: 10 }]);
+    const [food, setFood] = useState(generateFoodPosition(snake));
+    const [direction, setDirection] = useState('right');
+    const [score, setScore] = useState(0);
+    const [highScore, setHighScore] = useState(0);
+    const [isGameOver, setGameOver] = useState(false);
+    const [gameState, setGameState] = useState('PLAYING');
 
-      // Check wall collision
-      if (head.x < 0 || head.x >= boardSize || head.y < 0 || head.y >= boardSize) {
-        setGameOver(true);
-        return currentSnake;
-      }
+    const directionRef = useRef(direction);
 
-      // Check self collision
-      if (newSnake.some(segment => segment.x === head.x && segment.y === head.y)) {
-        setGameOver(true);
-        return currentSnake;
-      }
+    useEffect(() => {
+        const storedScores = JSON.parse(localStorage.getItem('snakeHighScores')) || { easy: 0, medium: 0, hard: 0 };
+        setHighScore(storedScores[level]);
+    }, [level]);
 
-      newSnake.unshift(head);
-
-      // Check food collision
-      if (head.x === food.x && head.y === food.y) {
-        setScore(prev => prev + 10);
-        setFood(generateFood());
-      } else {
-        newSnake.pop();
-      }
-
-      return newSnake;
-    });
-  }, [direction, food, gameOver, isPaused, generateFood]);
-
-  const handleKeyPress = useCallback((e) => {
-    if (gameOver) return;
-
-    const key = e.key.toLowerCase();
+    const startGame = () => {
+        const initialSnake = [{ x: 10, y: 10 }];
+        setSnake(initialSnake);
+        setFood(generateFoodPosition(initialSnake));
+        setDirection('right');
+        directionRef.current = 'right';
+        setScore(0);
+        setGameOver(false);
+        setGameState('PLAYING');
+    };
     
-    if (key === ' ') {
-      setIsPaused(prev => !prev);
-      return;
-    }
+    const changeDirection = useCallback((newDirection) => {
+        const currentDirection = directionRef.current;
+        const goingUp = currentDirection === 'up';
+        const goingDown = currentDirection === 'down';
+        const goingLeft = currentDirection === 'left';
+        const goingRight = currentDirection === 'right';
 
-    let newDirection = { ...direction };
+        if (newDirection === 'up' && !goingDown) directionRef.current = 'up';
+        if (newDirection === 'down' && !goingUp) directionRef.current = 'down';
+        if (newDirection === 'left' && !goingRight) directionRef.current = 'left';
+        if (newDirection === 'right' && !goingLeft) directionRef.current = 'right';
+    }, []);
 
-    switch (key) {
-      case 'arrowup':
-      case 'w':
-        if (direction.y === 0) newDirection = { x: 0, y: -1 };
-        break;
-      case 'arrowdown':
-      case 's':
-        if (direction.y === 0) newDirection = { x: 0, y: 1 };
-        break;
-      case 'arrowleft':
-      case 'a':
-        if (direction.x === 0) newDirection = { x: -1, y: 0 };
-        break;
-      case 'arrowright':
-      case 'd':
-        if (direction.x === 0) newDirection = { x: 1, y: 0 };
-        break;
-    }
-
-    setDirection(newDirection);
-  }, [direction, gameOver]);
-
-  useEffect(() => {
-    const gameInterval = setInterval(moveSnake, speed);
-    return () => clearInterval(gameInterval);
-  }, [moveSnake, speed]);
-
-  useEffect(() => {
-    window.addEventListener('keydown', handleKeyPress);
-    return () => window.removeEventListener('keydown', handleKeyPress);
-  }, [handleKeyPress]);
-
-  useEffect(() => {
-    if (score > highScore) {
-      setHighScore(score);
-      localStorage.setItem('snakeHighScore', score.toString());
-    }
-  }, [score, highScore]);
-
-  const resetGame = () => {
-    setSnake([{ x: 10, y: 10 }]);
-    setFood({ x: 15, y: 15 });
-    setDirection({ x: 0, y: -1 });
-    setGameOver(false);
-    setScore(0);
-    setIsPaused(false);
-  };
-
-  const renderBoard = () => {
-    const board = [];
-    for (let y = 0; y < boardSize; y++) {
-      for (let x = 0; x < boardSize; x++) {
-        let cellType = 'empty';
-        
-        if (snake.some(segment => segment.x === x && segment.y === y)) {
-          cellType = snake[0].x === x && snake[0].y === y ? 'snake-head' : 'snake-body';
-        } else if (food.x === x && food.y === y) {
-          cellType = 'food';
+    useEffect(() => {
+        if (gameState !== 'PLAYING' || isGameOver) {
+            return;
         }
 
-        board.push(
-          <div
-            key={`${x}-${y}`}
-            className={`cell ${cellType}`}
-          />
-        );
-      }
-    }
-    return board;
-  };
+        const gameInterval = setInterval(() => {
+            setSnake(prevSnake => {
+                const newSnake = [...prevSnake];
+                const head = { ...newSnake[0] };
 
-  return (
-    <div className="snake-game fade-in">
-      <div className="game-container">
-        <div className="game-header">
-          <h2>Snake Game</h2>
-          <div className="game-stats">
-            <div className="score">Score: {score}</div>
-            <div className="high-score">Best: {highScore}</div>
-          </div>
+                switch (directionRef.current) {
+                    case 'up': head.y -= 1; break;
+                    case 'down': head.y += 1; break;
+                    case 'left': head.x -= 1; break;
+                    case 'right': head.x += 1; break;
+                    default: break;
+                }
+
+                if (head.x < 0 || head.x >= BOARD_SIZE || head.y < 0 || head.y >= BOARD_SIZE ||
+                    newSnake.some(segment => segment.x === head.x && segment.y === head.y)) {
+                    setGameOver(true);
+                    setGameState('GAMEOVER');
+                    
+                    const storedScores = JSON.parse(localStorage.getItem('snakeHighScores')) || { easy: 0, medium: 0, hard: 0 };
+                    if (score > storedScores[level]) {
+                        storedScores[level] = score;
+                        localStorage.setItem('snakeHighScores', JSON.stringify(storedScores));
+                        setHighScore(score);
+                    }
+                    return prevSnake;
+                }
+
+                newSnake.unshift(head);
+
+                if (head.x === food.x && head.y === food.y) {
+                    setScore(s => s + 10);
+                    setFood(generateFoodPosition(newSnake));
+                } else {
+                    newSnake.pop();
+                }
+                
+                return newSnake;
+            });
+        }, speed);
+
+        return () => clearInterval(gameInterval);
+    }, [gameState, isGameOver, speed, food, score, level]);
+
+    useEffect(() => {
+        if (!canvasRef.current) return;
+        const context = canvasRef.current.getContext('2d');
+        context.fillStyle = '#0d1117';
+        context.fillRect(0, 0, context.canvas.width, context.canvas.height);
+        
+        context.fillStyle = '#f00';
+        context.strokeStyle = '#500';
+        context.fillRect(food.x * GRID_SIZE, food.y * GRID_SIZE, GRID_SIZE, GRID_SIZE);
+        context.strokeRect(food.x * GRID_SIZE, food.y * GRID_SIZE, GRID_SIZE, GRID_SIZE);
+
+        snake.forEach((segment, index) => {
+            context.fillStyle = index === 0 ? '#0f0' : '#0a0';
+            context.strokeStyle = '#000';
+            context.fillRect(segment.x * GRID_SIZE, segment.y * GRID_SIZE, GRID_SIZE, GRID_SIZE);
+            context.strokeRect(segment.x * GRID_SIZE, segment.y * GRID_SIZE, GRID_SIZE, GRID_SIZE);
+        });
+    }, [snake, food]);
+
+    useEffect(() => {
+        const handleKeyDown = (e) => {
+            if (gameState !== 'PLAYING') return;
+            const keyMap = { 'ArrowUp': 'up', 'ArrowDown': 'down', 'ArrowLeft': 'left', 'ArrowRight': 'right' };
+            const newDirection = keyMap[e.key];
+            if (newDirection) {
+                e.preventDefault();
+                changeDirection(newDirection);
+            }
+        };
+        window.addEventListener('keydown', handleKeyDown);
+        return () => window.removeEventListener('keydown', handleKeyDown);
+    }, [changeDirection, gameState]);
+
+    const pauseGame = () => {
+        setGameState(prev => (prev === 'PLAYING' ? 'PAUSED' : 'PLAYING'));
+    };
+
+    const goHome = () => navigate('/snake');
+
+    const Stats = ({ title, value }) => (
+        <div className="w-full p-2 bg-gray-900 rounded-lg shadow-md border-2 border-gray-700 text-center">
+            <h3 className="text-xs font-bold text-gray-300">{title}</h3>
+            <p className="text-lg font-mono text-cyan-400 mt-1">{value}</p>
         </div>
+    );
 
-        <div className="game-board">
-          {renderBoard()}
+    const GameOverModal = ({ score, onRestart }) => (
+        <div className="fixed inset-0 bg-black bg-opacity-75 flex flex-col justify-center items-center z-50">
+            <h2 className="text-4xl font-extrabold text-red-500 mb-4 animate-pulse">GAME OVER</h2>
+            <p className="text-lg text-white mb-2">Final Score</p>
+            <p className="text-3xl font-bold text-cyan-400 mb-8">{score}</p>
+            <button onClick={onRestart} className="px-6 py-3 bg-green-600 text-white font-bold text-lg rounded-lg hover:bg-green-700 transition duration-300 transform hover:scale-105 shadow-lg">
+                RESTART
+            </button>
+            <button onClick={goHome} className="px-6 py-3 bg-red-500 text-white font-bold text-sm rounded-lg hover:bg-red-400 transition mt-2">
+                HOME
+            </button>
         </div>
+    );
 
-        <div className="game-controls">
-          <p>Use arrow keys or WASD to move • Press SPACE to pause</p>
+    const PauseOverlay = () => (
+        <div className="pause-overlay">
+            <h2 className="pause-text">PAUSED</h2>
         </div>
+    );
 
-        {isPaused && !gameOver && (
-          <div className="game-overlay">
-            <h3>Game Paused</h3>
-            <p>Press SPACE to continue</p>
-          </div>
-        )}
-
-        {gameOver && (
-          <div className="game-overlay">
-            <h3>Game Over!</h3>
-            <p>Final Score: {score}</p>
-            {score === highScore && <p className="new-record">🎉 New High Score!</p>}
-            <div className="game-over-buttons">
-              <button className="play-again-btn" onClick={resetGame}>
-                🔄 Play Again
-              </button>
-              <button className="back-btn" onClick={() => navigate('/snake')}>
-                ⚙️ Settings
-              </button>
+    return (
+        <div className="snake-game-container">
+            <h1 className="text-5xl md:text-6xl font-black text-center mb-4 uppercase">
+            <span className="text-red-500">S</span><span className="text-orange-500">N</span><span className="text-yellow-400">A</span><span className="text-green-500">K</span><span className="text-cyan-400">E</span>
+        </h1>
+            {isGameOver && <GameOverModal score={score} onRestart={startGame} />}
+            <div className="snake-main-content">
+                <aside className="snake-left-panel">
+                    <Stats title="SCORE" value={score} />
+                    <Stats title="HIGH SCORE" value={highScore} />
+                </aside>
+                
+                <main className="snake-board-container">
+                    {gameState === 'PAUSED' && <PauseOverlay />}
+                    <canvas ref={canvasRef} id="game-board" width={GRID_SIZE * BOARD_SIZE} height={GRID_SIZE * BOARD_SIZE}></canvas>
+                </main>
+                
+                <aside className="snake-right-panel">
+                    <Stats title="LEVEL" value={level.toUpperCase()} />
+                    <button onClick={pauseGame} disabled={isGameOver} className="w-full px-4 py-2 bg-yellow-500 text-gray-900 font-bold text-sm rounded-lg hover:bg-yellow-400 transition disabled:bg-gray-500">
+                        {gameState === 'PAUSED' ? 'RESUME' : 'PAUSE'}
+                    </button>
+                    <button onClick={goHome} className="w-full px-4 py-2 bg-red-500 text-white font-bold text-sm rounded-lg hover:bg-red-400 transition mt-2">
+                        END GAME
+                    </button>
+                </aside>
             </div>
-          </div>
-        )}
-      </div>
-    </div>
-  );
-}
+        <div id="touch-controls">
+            <div id="up-button" class="control-button" onTouchStart={() => changeDirection('up')} aria-label="Up">▲</div>
+            <div id="left-button" class="control-button" onTouchStart={() => changeDirection('left')} aria-label="Move Left">◄</div>
+            <div id="right-button" class="control-button" onTouchStart={() => changeDirection('right')} aria-label="Move Right">►</div>
+            <div id="down-button" class="control-button" onTouchStart={() => changeDirection('down')} aria-label="Down">▼</div>
+        </div>
+        </div>
+    );
+};
 
 export default Snake;

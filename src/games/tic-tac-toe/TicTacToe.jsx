@@ -14,9 +14,9 @@ function TicTacToe() {
   const [scores, setScores] = useState({ X: 0, O: 0, ties: 0 });
 
   const winningCombinations = [
-    [0, 1, 2], [3, 4, 5], [6, 7, 8], // rows
-    [0, 3, 6], [1, 4, 7], [2, 5, 8], // columns
-    [0, 4, 8], [2, 4, 6] // diagonals
+    [0, 1, 2], [3, 4, 5], [6, 7, 8],
+    [0, 3, 6], [1, 4, 7], [2, 5, 8],
+    [0, 4, 8], [2, 4, 6]
   ];
 
   useEffect(() => {
@@ -67,17 +67,14 @@ function TicTacToe() {
     let move;
     
     if (difficulty === 'easy') {
-      // Random move
       move = availableMoves[Math.floor(Math.random() * availableMoves.length)];
     } else if (difficulty === 'medium') {
-      // 50% chance of optimal move, 50% random
       if (Math.random() < 0.5) {
         move = getBestMove(availableMoves);
       } else {
         move = availableMoves[Math.floor(Math.random() * availableMoves.length)];
       }
     } else {
-      // Hard - always optimal move
       move = getBestMove(availableMoves);
     }
 
@@ -88,31 +85,26 @@ function TicTacToe() {
   };
 
   const getBestMove = (availableMoves) => {
-    // Try to win
     for (let move of availableMoves) {
       const testBoard = [...board];
       testBoard[move] = 'O';
       if (checkWinningMove(testBoard, 'O')) return move;
     }
 
-    // Block player from winning
     for (let move of availableMoves) {
       const testBoard = [...board];
       testBoard[move] = 'X';
       if (checkWinningMove(testBoard, 'X')) return move;
     }
 
-    // Take center if available
     if (availableMoves.includes(4)) return 4;
 
-    // Take corners
     const corners = [0, 2, 6, 8];
     const availableCorners = corners.filter(corner => availableMoves.includes(corner));
     if (availableCorners.length > 0) {
       return availableCorners[Math.floor(Math.random() * availableCorners.length)];
     }
 
-    // Take any available move
     return availableMoves[Math.floor(Math.random() * availableMoves.length)];
   };
 
@@ -141,8 +133,8 @@ function TicTacToe() {
   return (
     <div className="tic-tac-toe-game fade-in">
       <div className="game-container">
-        <div className="game-header">
-          <h2>Tic Tac Toe</h2>
+        <div className="tic-tac-toe-game-header">
+          <h2>TIC TAC TOE</h2>
           <div className="game-mode-info">
             {gameMode === 'pvp' ? '👥 Player vs Player' : `🤖 vs Computer (${difficulty})`}
           </div>

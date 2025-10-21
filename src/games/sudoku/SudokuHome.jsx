@@ -6,9 +6,9 @@ function SudokuHome() {
   const navigate = useNavigate();
 
   const difficultyOptions = {
-    easy: { label: '😊 Easy', description: 'Perfect for beginners' },
-    medium: { label: '🤔 Medium', description: 'Balanced challenge' },
-    hard: { label: '😤 Hard', description: 'For puzzle masters' }
+    easy: { label: '😊 Easy'},
+    medium: { label: '🤔 Medium'},
+    hard: { label: '😤 Hard'}
   };
 
   const startGame = () => {
@@ -47,7 +47,6 @@ function SudokuHome() {
           <div className="instructions">
             <p>🎯 Fill each row, column, and 3×3 box with digits 1-9</p>
             <p>🚫 No repeating numbers in any row, column, or box</p>
-            <p>💡 Use logic and deduction to solve the puzzle</p>
           </div>
         </div>
 
